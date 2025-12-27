@@ -10,15 +10,21 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          # Removed libtinfo5 and added libtinfo6 + libncurses6 for Ubuntu 24.04 compatibility
           sudo apt-get install -y build-essential libffi-dev git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses6 libncursesw6 libtinfo6 cmake libssl-dev
           pip install --user --upgrade buildozer cython==0.29.36 virtualenv
 
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # This command ensures we accept all Android SDK licenses
-          yes | buildozer android debug
+          # 1. First, tell buildozer to just download the tools and accept licenses
+          # This avoids the "Broken pipe" by separating the setup from the main build.
+          buildozer android p4a -- help
+          
+          # 2. Now run the full build
+          buildozer -v android debug
+        env:
+          # This environment variable tells buildozer to accept all licenses automatically
+          APP_ANDROID_ACCEPT_SDK_LICENSE: "True"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

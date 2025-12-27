@@ -16,14 +16,15 @@ jobs:
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # 1. First, tell buildozer to just download the tools and accept licenses
-          # This avoids the "Broken pipe" by separating the setup from the main build.
-          buildozer android p4a -- help
+          # Setting these environment variables helps bypass some manual download checks
+          export APP_ANDROID_ACCEPT_SDK_LICENSE="True"
           
-          # 2. Now run the full build
+          # Clean any old failed attempts
+          buildozer android clean
+          
+          # Run the build with verbose output
           buildozer -v android debug
         env:
-          # This environment variable tells buildozer to accept all licenses automatically
           APP_ANDROID_ACCEPT_SDK_LICENSE: "True"
 
       - name: Upload APK

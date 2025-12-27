@@ -20,9 +20,9 @@ jobs:
           buildozer_version: master
           command: buildozer android debug
           
-      # Upload the APK so you can download it
+      # Upload the APK so you can download it (Updated to v4)
       - name: Upload APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: bin/*.apk

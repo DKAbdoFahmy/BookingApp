@@ -1,0 +1,28 @@
+name: Build APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      # Fix permissions to ensure buildozer can run
+      - name: Fix Permissions
+        run: |
+          sudo chmod -R 777 .
+      
+      # Run the Buildozer action
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          workdir: .
+          buildozer_version: master
+          command: buildozer android debug
+          
+      # Upload the APK so you can download it
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: bin/*.apk
